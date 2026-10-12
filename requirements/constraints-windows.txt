@@ -1,0 +1,5 @@
+# Keep the starter's core pins. PyArrow 26 requires NumPy 2 at import time,
+# while this lab deliberately uses NumPy 1.26.4 for RAGAS/NeMo 0.10.
+-c constraints-core.txt
+pyarrow==17.0.0
+pandas==2.2.3

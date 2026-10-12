@@ -1,5 +1,65 @@
 # K4 Track 3B — Production Eval + Guardrail Stack
 
+## Bản làm cá nhân — Phạm Thanh Trung, 2A202602949
+
+Chủ project yêu cầu làm cá nhân; đề gốc vẫn quy định bài nhóm. Bản này khai một
+người trong TEAM và ghi AI hỗ trợ, không giả lập thành viên/commit của người khác.
+Pipeline m1–m5 được lấy từ bài Day18 của chủ project:
+[repo Day18](https://github.com/trump22/K4-Track3B-Day18-PhamThanhTrung-2A2202602949-Production-RAG).
+MSSV của bài nộp này là **2A202602949**; tên repo Day18 cũ giữ nguyên để truy nguồn.
+
+Adapter giữ giao diện runner: m4 dùng RAGAS thật với model evaluator cấu hình riêng,
+embedding BGE-M3 và trả metadata; m5 chuyển sang OpenAI-compatible endpoint; m2
+dùng `search` phù hợp Qdrant client 1.9.2 do đề pin, thay API `query_points` của
+phiên bản mới hơn. Tasks 1–12 được implement trong ba file phase. Tests, fixtures,
+runner, exporter, checker và JSON Schema giữ nguyên starter.
+
+Trên Windows dùng Python 3.11 và constraints bổ sung để PyArrow tương thích với
+NumPy 1.26.4 của đề. Cài đặt full runtime đã phát hiện PyArrow 26 yêu cầu NumPy 2
+khi import, dù `pip check` không phát hiện xung đột binary đó.
+
+```powershell
+py -3.11 -m venv .venv
+.venv/Scripts/python.exe -m pip install -r requirements/requirements.txt -c requirements/constraints-windows.txt
+.venv/Scripts/python.exe -m spacy download en_core_web_lg
+docker compose -f infra/docker-compose.yml up -d
+# Copy .env.example to .env and fill your credentials privately.
+# For Azure, set both endpoint variables and the actual deployment names.
+# Set guardrails/config.yml models.main.model to that guard deployment too.
+.venv/Scripts/python.exe scripts/setup_answers.py --live
+.venv/Scripts/python.exe scripts/run_experiments.py --phase a --live
+.venv/Scripts/python.exe scripts/run_experiments.py --phase b --live
+.venv/Scripts/python.exe scripts/run_experiments.py --phase c --live --latency-samples 20
+.venv/Scripts/python.exe scripts/check_lab.py
+```
+
+Unit tests và thực nghiệm API là hai bằng chứng khác nhau. Không chạy live
+integration lần nữa sau khi các runner đã sinh artifacts thật. Blueprint là đề
+xuất; số đo input guard không được coi là full-guard latency. Hai PDF scan không
+có text layer được loader báo bỏ qua; dữ liệu nguồn vẫn được giữ nguyên.
+
+### Kết quả thực nghiệm ngày 12/10/2026
+
+| Hạng mục | Kết quả lưu trong artifacts |
+|---|---|
+| Answers | 50/50 gọi LLM thật, phân bố 20/20/10, contexts không rỗng |
+| RAGAS | Mean bốn metrics 0.818578; faithfulness 0.859167 |
+| Nhóm yếu nhất | multi_hop 0.733599; factual 0.942030; adversarial 0.741632 |
+| Judge calibration | 10/10 nhãn đồng ý human; Cohen's κ=1.0 |
+| Input guard | 20/20 attacks blocked, 8/8 clean allowed, FPR=0 |
+| Output guard | 4/4 đúng; hai output sạch giữ nguyên |
+| Input latency | 20 samples + 2 warm-up; P95=1151.036ms, target500ms chưa đạt |
+| Kiểm tra bản cuối | `check_lab.py --with-tests`: 86 passed, 3 deselected; 0 failed checks |
+
+Ba integration tests được deselect mặc định; runner API đã chạy riêng. Số checks
+đạt không phải điểm rubric. Guard stack dùng cả NeMo và Azure content filter:
+4 attacks dừng ở Presidio, 5 bị vendor filter chặn trong stage NeMo, 11 bởi rail.
+Tầng PII giới hạn định danh có mẫu để tránh English NER nhận nhầm câu tiếng Việt;
+yêu cầu thông tin nhân viên được semantic rail kiểm tra. Self-check prompt khai
+rõ phạm vi nội bộ để chặn cả off-topic vô hại. Xem ba báo cáo trong `doc/reports/`
+về lỗi RAG/phiên bản/abstention, attribution, latency và CI/CD đề xuất.
+
+
 **Bài nhóm: mỗi nhóm dùng và nộp một repo chung của trưởng nhóm.**
 Mỗi người khai phần thực tế đã làm trong [doc/TEAM.md](doc/TEAM.md).
 
