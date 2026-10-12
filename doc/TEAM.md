@@ -8,7 +8,7 @@ Theo yêu cầu trực tiếp của người học, bài được triển khai d
 
 Ngày chạy: 12/10/2026. Deadline hiển thị trên Vlearn: 13/10/2026 11:59 — Asia/Ho_Chi_Minh (UTC+07:00).
 
-Commit mã và bằng chứng thực nghiệm: ghi SHA sau khi đóng gói; commit tài liệu kế tiếp chỉ lưu SHA đó. Link nộp sẽ trỏ bản cuối trên GitHub.
+Commit mã và bằng chứng thực nghiệm: `633d7e5ffb132fdfa97f8eb48e4c460e6a0db06e`. Commit tài liệu kế tiếp chỉ ghi SHA này; link nộp trỏ bản cuối bao gồm khai báo SHA.
 
 ## Thành viên và công việc thực tế
 
