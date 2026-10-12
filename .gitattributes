@@ -1,0 +1,4 @@
+# Evidence was generated on Windows; the unchanged checker hashes raw bytes.
+# Explicit checkout endings reproduce those source hashes on every platform.
+fixtures/*.json text eol=crlf
+artifacts/*.json text eol=crlf

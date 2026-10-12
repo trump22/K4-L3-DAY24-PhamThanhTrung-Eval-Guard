@@ -59,6 +59,12 @@ yêu cầu thông tin nhân viên được semantic rail kiểm tra. Self-check 
 rõ phạm vi nội bộ để chặn cả off-topic vô hại. Xem ba báo cáo trong `doc/reports/`
 về lỗi RAG/phiên bản/abstention, attribution, latency và CI/CD đề xuất.
 
+`.gitattributes` quy định checkout CRLF cho JSON fixtures/artifacts vì metadata
+SHA256 của lần chạy Windows được tính trên bytes CRLF. Nếu Git tự checkout LF
+trên máy khác, checker sẽ báo hash sai dù JSON cùng nội dung. Quy tắc này giữ
+hash lần chạy và không sửa nội dung fixtures hay checker. Clone bằng Git để
+nhận đúng checkout rule trước chạy `scripts/check_lab.py`.
+
 
 **Bài nhóm: mỗi nhóm dùng và nộp một repo chung của trưởng nhóm.**
 Mỗi người khai phần thực tế đã làm trong [doc/TEAM.md](doc/TEAM.md).
